@@ -80,3 +80,10 @@ Implements sleep obfuscation capabilities using the **Ekko** technique.
 
 - **LibTP Integration**: Hook NTDLL calls from the implant itself to make API calls more stealthy by using LibTP for indirect system calls.
 - **PICO Management Library**: Development of a shared library for managing PICOs loaded in memory, providing better control and coordination of loaded modules.
+
+# References
+
+- https://tradecraftgarden.org/simpleguard.html
+- https://github.com/pard0p/LibWinHttp
+- https://github.com/Cracked5pider/Ekko
+- (For future usage) https://github.com/rasta-mouse/LibTP
