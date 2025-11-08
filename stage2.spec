@@ -21,6 +21,12 @@ x86:
             export
             link "transport_module"
 
+		load "bin/hooks.x86.o"
+            make object
+			mergelib "lib/LibTP/libtp.x86.zip"
+            export
+            link "hooks_module"
+
 		# export our COFF as a ready-to-load PICO and return to stage 1
 		export
 
@@ -36,5 +42,11 @@ x64:
 			mergelib "lib/LibWinHttp/libwinhttp.x64.zip"
             export
             link "transport_module"
+
+		load "bin/hooks.x64.o"
+            make object
+			mergelib "lib/LibTP/libtp.x64.zip"
+            export
+            link "hooks_module"
 
 		export

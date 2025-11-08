@@ -10,6 +10,7 @@ PICO-Implant is a Proof of Concept C2 implant built using Position-independent C
 - **Position Independent Code**: All modules built as PICOs for maximum flexibility.
 - **Modular Design**: Separate modules for communication, entry point and obfuscation.
 - **Remote Loading**: Stage 2 remotely loads core implant code.
+- **LibTP Integration**: Hook calls from the implant itself to make API calls more stealthy.
 
 ## Architecture Overview
 
@@ -76,7 +77,14 @@ Implements sleep obfuscation capabilities using the **Ekko** technique.
 
 ## Future Enhancements
 
-### Planned Features
-
-- **LibTP Integration**: Hook NTDLL calls from the implant itself to make API calls more stealthy by using LibTP for indirect system calls.
 - **PICO Management Library**: Development of a shared library for managing PICOs loaded in memory, providing better control and coordination of loaded modules.
+
+# References
+
+- https://github.com/rasta-mouse/LibTP
+- https://github.com/pard0p/LibWinHttp
+
+- https://tradecraftgarden.org/simplehook.html
+- https://tradecraftgarden.org/simpleguard.html
+
+- https://github.com/Cracked5pider/Ekko
