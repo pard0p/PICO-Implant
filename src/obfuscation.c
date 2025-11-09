@@ -2,8 +2,6 @@
 
 WINUSERAPI int WINAPI USER32$MessageBoxA(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType);
 
-#ifdef WIN_X64
-
 #define NT_SUCCESS(Status)      ((NTSTATUS)(Status) >= 0)
 #define NtCurrentThread()       ((HANDLE)(LONG_PTR)-2)
 #define NtCurrentProcess()      ((HANDLE)(LONG_PTR)-1)
@@ -209,14 +207,6 @@ void EkkoObfuscation(char * start_addr, int size, int sleep_time) {
         KERNEL32$WaitForSingleObject(hEvent, INFINITE);
     }
 }
-
-#elif defined(WIN_X86)
-	WINBASEAPI VOID WINAPI KERNEL32$Sleep(DWORD dwMilliseconds);
-
-	void EkkoObfuscation(char * start_addr, int size, int time) {
-		KERNEL32$Sleep(time);
-	}
-#endif
 
 void go(char * start_addr, int size, int time) {
 	EkkoObfuscation(start_addr, size, time);
